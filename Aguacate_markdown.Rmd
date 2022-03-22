@@ -1,8 +1,12 @@
 ---
 title: "Resultados producción aguacate"
-author: Herney Dario Vasquez, Diego Rojas, Deysi Johana Guerrero, Elida Patricia Marin y Luis Fernando Delgado Muñoz
+author: Herney Dario Vasquez, Diego Rojas, Deysi Johana Guerrero, Elida Patricia Marin
+  y Luis Fernando Delgado Muñoz
 date: "20/1/2022"
-output: word_document
+output:
+  word_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE, cache = FALSE}
@@ -16,6 +20,7 @@ library(kableExtra)
 library(gridExtra)
 library(emmeans)
 library(multcomp)
+library(broom)
 ```
 
 ```{r}
@@ -27,14 +32,14 @@ data <- read.csv("Data/data.csv", sep = ";", header = T, na.strings = ".")
 
 ## Producción por cosecha durante los años 2020 y 2021 (cosecha mitaca y principal)
 
-A continuación se muestra la visualización de los datos de producción de los años 2020 y 2021 divididos por cosechas (mitaca y principal). Es importante mencionar que la implementación del fertirriego se llevo a cabo solo para el año 2021, es decir, en el año 2020 no hubo fertirrigación. En la grafica se puede notar que el fertirriego no tiene un efecto en la producción paa ninguna de las dos cosechas.
+A continuación se muestra la visualización de los datos de producción de los años 2020 y 2021 divididos por cosechas (mitaca y principal). Es importante mencionar que la implementación del fertirriego se llevó a cabo solo para el año 2021, es decir, en el año 2020 no hubo fertiirrigación. En la gráfica se puede notar que el fertirriego no tiene un efecto en la producción para ninguna de las dos cosechas.
 
 ```{r}
 graph_1 <- data %>% dplyr::filter(Temporada == 2020) %>%  ggplot(aes(x = Tratamiento, y = Produccion_arbol, fill = Tratamiento)) +
   geom_boxplot() +
   stat_summary(fun.y = mean, geom="point", shape=20, color="red", fill="red") +
   scale_fill_manual(values = c("#979a9a")) +
-  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*arbol^-1)), x = NULL, title = "Producción año 2021") +
+  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*arbol^-1)), x = NULL, title = "Producción año 2020") +
   scale_y_continuous(breaks = round(seq(min(data$Produccion_arbol), max(data$Produccion_arbol), by = 10), 1)) +
   theme_bw() +
   facet_grid(Cosecha~Subparcela, scales = "free_x")
@@ -57,7 +62,7 @@ grid.arrange(graph_1, graph_2, ncol=2)
 
 ## Producción anual años 2020 y 2021
 
-A continuación se muestra la producción total por arbol acumulada de las 2 cosechas, en donde se puede notar que para la producción acumulada tampoco hubo un efecto del tratamiento de fertirrigación.
+A continuación se muestra la producción total por árbol acumulada de las 2 cosechas, en donde se puede notar que para la producción acumulada tampoco hubo un efecto del tratamiento de fertiirrigación.
 
 ```{r}
 graph_3 <- data %>% group_by(Temporada, Subparcela, Rep, Tratamiento) %>% summarise(acum = sum(Produccion_arbol)) %>% 
@@ -90,11 +95,14 @@ graph_4 <- data %>% group_by(Temporada, Subparcela, Rep, Tratamiento) %>% summar
 grid.arrange(graph_3, graph_4, ncol=2)
 ```
 
+```{r eval=FALSE}
 # Producción total por tratamiento expresada en barras año 2021
 
-El siguiente grafico muestra la producción total acumulada por cada parcela; se nota que aún habiendose implementado el sistema de fertirrigación, la producción correspondiente a esta parcela es menor a la producción de la parcela sin fertirriego. Es importante mencionar que la aplicacion del fertirriego se llevaba a cabo solo cuando la tensión del suelo alcanzaba un determinado valor correspondiente a cuando este se econtraba en estado seco. Por lo que lo mas probable es que no hubo una suficiente aplicación del tratamiento ya que en el año 2021 hubo lluvias prolongadas, las cuales actuaron como un factor perturbador en le experimento.
+# El siguiente grafico muestra la producción total acumulada por cada parcela; se nota que aun habiéndose implementado el sistema de fertiirrigación, la producción correspondiente a esta parcela es menor a la producción de la parcela sin fertirriego. Es importante mencionar que la aplicación del fertirriego se llevaba a cabo solo cuando la tensión del suelo alcanzaba un determinado valor correspondiente a cuando este se encontraba en estado seco. Por lo que lo más probable es que no hubo una suficiente aplicación del tratamiento ya que en el año 2021 hubo lluvias prolongadas, las cuales actuaron como un factor perturbador en el experimento.
 
-```{r fig.align='center', fig.width = 10, fig.height = 6}
+```
+
+```{r fig.align='center', fig.width = 10, fig.height = 6, eval=FALSE}
 data %>% group_by(Temporada, Subparcela, Tratamiento) %>% summarise(acum = sum(Produccion_arbol)) %>% dplyr::filter(Temporada == 2021) %>% 
   ggplot(aes(x = Subparcela, y = acum, fill = Tratamiento)) +
   geom_col(position = "stack", colour="black") +
@@ -107,7 +115,7 @@ data %>% group_by(Temporada, Subparcela, Tratamiento) %>% summarise(acum = sum(P
 
 # Variable Altura de los arboles sobre el nivel del mar
 
-Se decidió incluir la variable altura de los arboles sobre el nivel del mar. A continuación se muestran las diferentes alturas de los arboles muestreados correspondientes a cada subparcela. Se puede notar que los arboles correspondientes a la subparcela con fertirriego tuvieron una mayor dispersión en altura en comparación con los arboles de la parcela sin fertirriego.
+Se decidió incluir la variable altura de los árboles sobre el nivel del mar. A continuación se muestran las diferentes alturas de los árboles muestreados correspondientes a cada subparcela. Se puede notar que los árboles correspondientes a la subparcela con fertirriego tuvieron una mayor dispersión en altura en comparación con los árboles de la parcela sin fertirriego.
 
 ```{r}
 pn_acum <- data %>% group_by(Temporada, Subparcela, Rep, Tratamiento, Altura) %>% summarise(acum = sum(Produccion_arbol))
@@ -123,7 +131,7 @@ pn_acum %>% dplyr::filter(Temporada == 2021) %>% ggplot(aes(x = Tratamiento, y =
   
 ```
 
-Con el objetivo de incluir el efecto de la altura sobre la producción de aguacate se decidió convertir a factor las diferentes alturas de los arboles como se muestra en la siguiente tabla:
+Con el objetivo de incluir el efecto de la altura sobre la producción de aguacate se decidió convertir a factor las diferentes alturas de los árboles como se muestra en la siguiente tabla:
 
 | Altura de siembra de arboles (msnm) | Clasificación  |
 |-------------------------------------|----------------|
@@ -143,18 +151,28 @@ pn_acum_2021 <- pn_acum %>% dplyr::filter(Temporada == 2021) %>%
 pn_acum_2021$Altura_category = as.factor(pn_acum_2021$Altura_category)
 ```
 
-## Modelación | Analisis de varianza
+## Modelación \| Analisis de varianza
 
-Se llevó a cabo un modelo estadistico con el objetivo de analizar la varianza del experimento; como variable dependiente se uso la producción acumulada de cada arbol durante el periodo 2021, y como variables independientes se usaron el tratamiento de fertirrigación y la clasificación de las alturas establecida previamente. 
-Se pudo notar que la variable tratamiento (fertirrigación) no tuvo efecto estadistico significativo, mientras que la variable clasificatoria de las aturas si tuvo un efecto altamente significativo sobre la producción de aguacate.
+Para el análisis estadístico de los datos se utilizó un diseño de Bloques Completos al Azar, donde la altura sobre el nivel de mar se consideró como factor bloque y el uso o no de fertirriego como factor de tratamiento. Las corridas del análisis exploratorio y análisis de varianza del experimento se realizaron empleando el software estadístico R version 4.1.1 (2021-08-10).
+
+Se pudo notar que factor de tratamiento (fertirrigación) no tuvo efecto estadístico significativo, mientras que la altura sobre el nivel de mar si tuvo un efecto altamente significativo sobre la producción de aguacate.
+
+A continuación se muestra la tabla de análisis de varianza.
 
 ```{r}
 mod.aguacate <- lm(acum ~ Tratamiento + Altura_category, data = pn_acum_2021)
 # ANOVA para mostrar
 ao_aguacate <- anova(mod.aguacate)
-ao_aguacate
+
 ```
-A continuación se muestra la prueba de medias para las clasificaciones de las alturas mediante la prueba de Tukey. Se puede notar que la producción promedio de los arboles sembrados a alturas bajas y medias (< 1750 hasta 1770 msnm) fueron estadisticamente iguales; a diferencia de la producción promedio de los arboles a alturas elevadas que si fueron estadisticamente diferentes a las otras 2 alturas.
+
+| Fuente de variación      | Grados de libertad | Suma de cuadrados | Cuadrados medios | F calculado | p valor  |
+|--------------------------|--------------------|-------------------|------------------|-------------|----------|
+| Tratamiento              | 1                  | 1433.654          | 1433.653         | 1.780       | 0.192    |
+| Clasificación de alturas | 2                  | 18842.566         | 9421.283         | 11.697      | 0.000188 |
+| error                    | 29                 | 23356.387         | 805.392          |             |          |
+
+A continuación se muestra la prueba de medias para las clasificaciones de las alturas mediante la prueba de Tukey. Se puede notar que la producción promedio de los árboles sembrados a alturas bajas y medias (\< 1750 hasta 1770 msnm) fueron estadísticamente iguales; a diferencia de la producción promedio de los árboles a alturas elevadas que si fueron estadísticamente diferentes a las otras 2 alturas.
 
 ```{r}
 
@@ -164,12 +182,18 @@ mean_comparisons_altura <- mod.aguacate %>%
   pluck("emmeans") %>% 
   cld(details=TRUE, Letters=letters) # add letter display
 
-mean_comparisons_altura$emmeans # adjusted variety means
 ```
 
-A continuación se ilustra la producción promedio anual de los arboles sembrados a diferentes alturas. Se nota que a mayor altura hay una mayor producción; es por esto que se decide hacer un diagrama de dispersión de altura en función de la producción.
+|                          |          |              |
+|--------------------------|----------|--------------|
+| Clasificación de alturas | Promedio | Agrupamiento |
+| Altura baja              | 116      | a            |
+| Altura media             | 144      | a            |
+| Altura elevada           | 182      | b            |
 
-```{r fig.align='center', fig.width = 10, fig.height = 4}
+A continuación se ilustra la producción promedio anual de los árboles sembrados a diferentes alturas. Se nota que a mayor altura hay una mayor producción; es por esto por lo que se decide hacer un diagrama de dispersión de altura en función de la producción.
+
+```{r fig.align='center', fig.width = 10, fig.height = 6}
 # plotting Results for Tto para mostrar
 mean_comparisons_altura$emmeans$Altura_category <- factor(mean_comparisons_altura$emmeans$Altura_category, levels = c("Altura baja", "Altura media", "Altura Elevada"))
 
@@ -186,7 +210,7 @@ ggplot() +
   scale_fill_manual(values = c("#2c3845", "#5d6d7e", "#979a9a")) +
   ylim(c(0, 200)) + # force y-axis to start at 0
   ylab("Producción promedio anual (kg/árbol)") + # label y-axis      # label x-axis
-  labs(x = NULL, caption = "
+  labs(x = NULL, fill = "Clasificación de altura", caption = "
        Promedios con letras iguales no son significativamente diferentes de acuerdo a la prueba de Tukey.
        ") +
   theme_bw() # clearer plot format 
@@ -194,9 +218,9 @@ ggplot() +
 
 # Correlación entre alturas de siembra y producción de fruto fresco
 
-En la siguiente grafica se puede visualizar la tendencia que tuvo la producción de los frutos en función de la altura de siembra de los arboles. Claramente hay una tendencia positiva con un coefienciente de correlación de Pearson de 0.63 siendo 1 el valor mas alto que este coeficeinte pueda alcanzar. La posible explicación de este fenomeno se debe basicamente a que nn las alturas bajas se puede llegar a acumular mucha humedad en el suelo por la alta humedad relativa, lo que posiblemente estaría causando un estrés fisiologico y de esta manera se estaría afectando la producción. 
+En la siguiente grafica se puede visualizar la tendencia que tuvo la producción de los frutos en función de la altura de siembra de los árboles. Claramente hay una tendencia positiva con un coeficiente de correlación de Pearson de 0.63 siendo 1 el valor más alto que este coeficiente pueda alcanzar. La posible explicación de este fenómeno se debe básicamente a que las alturas bajas se pueden llegar a acumular mucha humedad en el suelo por la alta humedad relativa, lo que posiblemente estaría causando un estrés fisiológico y de esta manera se estaría afectando la producción.
 
-```{r fig.align='center', fig.width = 10, fig.height = 5}
+```{r fig.align='center', fig.width = 10, fig.height = 7}
 r_cor <- round(cor(pn_acum_2021$acum, pn_acum_2021$Altura, method = "pearson"),3)
 
 pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum)) +
@@ -210,7 +234,7 @@ pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum)) +
 
 ```
 
-Con el objetivo de observar con mas detalle se decidió llevar a cabo el mismo diagrama de dispersión, pero diferenciando el tratamiento los arboles que tuvieron fertirriego y los que no tuvieron. En este gráfico se puede concluir que hubo una distribución mas amplia de alturas de siembra para los arboles con fertirriego comparado con los arboles que no tenian fertirriego.
+Con el objetivo de observar con más detalle se decidió llevar a cabo el mismo diagrama de dispersión, pero diferenciando el tratamiento los árboles que tuvieron fertirriego y los que no tuvieron. En este gráfico se puede concluir que hubo una distribución más amplia de alturas de siembra para los árboles con fertirriego comparado con los árboles que no tenían fertirriego.
 
 ```{r fig.align='center', fig.width = 10, fig.height = 5}
 pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum, color = Tratamiento)) +
@@ -240,7 +264,7 @@ Calidad_fruto <- Calidad_fruto %>% relocate(Peso_meso, Peso_corteza, Peso_semill
 
 # Matrix correlación general
 
-La matrix de correlación general no muestra correlaciones fuertes entre las diferentes variables de calidad de fruto. Se decidió hacer una matrix de correlaciones por cada cosecha (traviesa y principal).
+La matriz de correlación general no muestra correlaciones fuertes entre las diferentes variables de calidad de fruto. Se decidió hacer una matriz de correlaciones por cada cosecha (traviesa y principal).
 
 ```{r fig.align='center', fig.width = 15, fig.height = 10}
 library(corrplot)
@@ -252,7 +276,7 @@ corrplot(res, type = "upper", order = "hclust",
 
 ## Matrix de correlación por cosecha Traviesa
 
-La matrix de correlación de los datos correspondientes a la cosecha traviesa no mostraron correlaciones entre las diferentes variables de calidad de fruto. Una posible explicación de esta falta de correlaciones puede ser por una falta de validez interna (inapropiado manejo de los instrumentos de medición) o falta de validez externa (poca representación de la muestra).
+La matriz de correlación de los datos correspondientes a la cosecha traviesa no mostró correlaciones entre las diferentes variables de calidad de fruto. Una posible explicación de esta falta de correlaciones puede ser por una falta de validez interna (inapropiado manejo de los instrumentos de medición) o falta de validez externa (poca representación de la muestra).
 
 ```{r fig.align='center', fig.width = 15, fig.height = 10}
 res_Traviesa <- cor(use = "na.or.complete", Calidad_fruto %>% dplyr::filter(Cosecha == "Traviesa") %>% dplyr::select(-c("Subparcela", "Muestra", "Cosecha", "Forma__corteza", "pH_endo")))
@@ -261,7 +285,7 @@ corrplot(res_Traviesa, type = "upper", tl.col = "black", tl.srt = 45)
 
 ## Matrix de correlación por cosecha principal
 
-En la matrix de correlación correspondiente a la cosecha principal se puede notar correlaciones mas fuertes entre las diferentes variables de calidad.
+En la matriz de correlación correspondiente a la cosecha principal se puede notar correlaciones más fuertes entre las diferentes variables de calidad.
 
 ```{r fig.align='center', fig.width = 15, fig.height = 10}
 res_principal <- cor(use = "na.or.complete", Calidad_fruto %>% dplyr::filter(Cosecha == "Principal") %>% dplyr::select(-c("Subparcela", "Muestra", "Cosecha", "Forma__corteza", "pH_endo")))
@@ -270,12 +294,11 @@ corrplot(res_principal, type = "upper", tl.col = "black", tl.srt = 45)
 
 # Rsultado de calidad para cosecha principal
 
-A continuación se muestran los resultados de calidad correspondientes a la cosecha principal. Las barras mostradas corresponden al promedio de las replicas que se usaron para la medición de las variables. 
+A continuación se muestran los resultados de calidad correspondientes a la cosecha principal. Las barras mostradas corresponden al promedio de las réplicas que se usaron para la medición de las variables.
 
 ## Variables de peso
 
-La siguiente gráfica corresponde a las variables mas importantes desde el punto de vista del rendimiento y producción de fruto fresco. Se evidenció que solo hubo efecto del tratamiento en la variable peso de semilla y porcentaje de pulpa.
-
+La siguiente gráfica corresponde a las variables más importantes desde el punto de vista del rendimiento y producción de fruto fresco. Se evidenció que solo hubo efecto del tratamiento en la variable peso de semilla y porcentaje de pulpa.
 
 ```{r fig.align='center', fig.width = 15, fig.height = 10}
 boxp_prom_calidad <- Calidad_fruto %>% dplyr::filter(Cosecha == "Principal")
@@ -328,7 +351,7 @@ grid.arrange(box_sl, box_sw, box_pl, box_pw, box_ci, ncol = 3, nrow = 2)
 
 ## Variables quimicas de fruto
 
-La siguiente gráfica muestra los resultados de las variables químicas de los frutos para la cossecha principal. Se puede notar un efecto significativo de la aplicación del fertirriego en las variables % de acidez y grasa total.
+La siguiente gráfica muestra los resultados de las variables químicas de los frutos para la cosecha principal. Se puede notar un efecto significativo de la aplicación del fertirriego en las variables % de acidez y grasa total.
 
 ```{r fig.align='center', fig.width = 15, fig.height = 10}
 # box_TD <- ggplot(boxp_prom_calidad, aes(x = Subparcela, y = Tamaño.dorsal, fill = Subparcela)) +
@@ -372,6 +395,3 @@ grid.arrange(box_AEndo, box_GBE, box_Grasa, box_Fibra, ncol = 2, nrow = 2)
 
 # Eliminar Tamaño dorsal, Long endocarpio, ancho del endocarpio, haces vasculares
 ```
-
-
-
