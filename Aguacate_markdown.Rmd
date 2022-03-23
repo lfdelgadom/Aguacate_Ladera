@@ -39,7 +39,7 @@ graph_1 <- data %>% dplyr::filter(Temporada == 2020) %>%  ggplot(aes(x = Tratami
   geom_boxplot() +
   stat_summary(fun.y = mean, geom="point", shape=20, color="red", fill="red") +
   scale_fill_manual(values = c("#979a9a")) +
-  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*arbol^-1)), x = NULL, title = "Producción año 2020") +
+  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*árbol^-1)), x = NULL, title = "Producción año 2020") +
   scale_y_continuous(breaks = round(seq(min(data$Produccion_arbol), max(data$Produccion_arbol), by = 10), 1)) +
   theme_bw() +
   facet_grid(Cosecha~Subparcela, scales = "free_x")
@@ -50,7 +50,7 @@ graph_2 <- data %>% dplyr::filter(Temporada == 2021) %>%  ggplot(aes(x = Tratami
   geom_boxplot() +
   stat_summary(fun.y = mean, geom="point", shape=20, color="red", fill="red") +
   scale_fill_manual(values = c("#5d6d7e", "#979a9a")) +
-  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*arbol^-1)), x = NULL, title = "Producción año 2021") +
+  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*árbol^-1)), x = NULL, title = "Producción año 2021") +
   scale_y_continuous(breaks = round(seq(min(data$Produccion_arbol), max(data$Produccion_arbol), by = 10), 1)) +
   theme_bw() +
   facet_grid(Cosecha~Subparcela, scales = "free_x")
@@ -71,7 +71,7 @@ graph_3 <- data %>% group_by(Temporada, Subparcela, Rep, Tratamiento) %>% summar
   geom_boxplot() +
   stat_summary(fun.y = mean, geom="point", shape=20, color="red", fill="red") +
   scale_fill_manual(values = c("#979a9a")) +
-  labs(y =expression(Producción~(kg*"*"*año^-1*"*"*arbol^-1)), x = NULL, title = "Producción total año 2020") +
+  labs(y =expression(Producción~(kg*"*"*año^-1*"*"*árbol^-1)), x = NULL, title = "Producción total año 2020") +
   #scale_y_continuous(breaks = round(seq(min(data$Produccion_arbol), max(data$Produccion_arbol), by = 10), 1)) +
   theme_bw() +
   facet_grid(~Subparcela, scales = "free_x")
@@ -84,7 +84,7 @@ graph_4 <- data %>% group_by(Temporada, Subparcela, Rep, Tratamiento) %>% summar
   geom_boxplot() +
   stat_summary(fun.y = mean, geom="point", shape=20, color="red", fill="red") +
   scale_fill_manual(values = c("#5d6d7e", "#979a9a")) +
-  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*arbol^-1)), x = NULL, title = "Producción total año 2021") +
+  labs(y = expression(Producción~(kg*"*"*año^-1*"*"*árbol^-1)), x = NULL, title = "Producción total año 2021") +
   #scale_y_continuous(breaks = round(seq(min(data$Produccion_arbol), max(data$Produccion_arbol), by = 10), 1)) +
   theme_bw() +
   facet_grid(~Subparcela, scales = "free_x")
@@ -113,7 +113,7 @@ data %>% group_by(Temporada, Subparcela, Tratamiento) %>% summarise(acum = sum(P
   facet_grid(~Temporada)
 ```
 
-# Variable Altura de los arboles sobre el nivel del mar
+# Variable Altura de los árboles sobre el nivel del mar
 
 Se decidió incluir la variable altura de los árboles sobre el nivel del mar. A continuación se muestran las diferentes alturas de los árboles muestreados correspondientes a cada subparcela. Se puede notar que los árboles correspondientes a la subparcela con fertirriego tuvieron una mayor dispersión en altura en comparación con los árboles de la parcela sin fertirriego.
 
@@ -126,14 +126,14 @@ pn_acum %>% dplyr::filter(Temporada == 2021) %>% ggplot(aes(x = Tratamiento, y =
   geom_boxplot(width=0.4, aes(fill= Tratamiento)) +
   scale_fill_manual(values = c("#5d6d7e", "#979a9a")) +
   geom_jitter(width = 0.1, size = 2) +
-  labs(title = "Variación de alturas de los arboles muestreados", y = "Altura (msnm)") +
+  labs(title = "Variación de alturas de los árboles muestreados", y = "Altura (msnm)") +
   theme_bw()
   
 ```
 
 Con el objetivo de incluir el efecto de la altura sobre la producción de aguacate se decidió convertir a factor las diferentes alturas de los árboles como se muestra en la siguiente tabla:
 
-| Altura de siembra de arboles (msnm) | Clasificación  |
+| Altura de siembra de árboles (msnm) | Clasificación  |
 |-------------------------------------|----------------|
 | Alturas \<= 1750                    | Altura baja    |
 | alturas \> 1750 y \<= 1770          | Altura media   |
@@ -224,7 +224,7 @@ En la siguiente grafica se puede visualizar la tendencia que tuvo la producción
 r_cor <- round(cor(pn_acum_2021$acum, pn_acum_2021$Altura, method = "pearson"),3)
 
 pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum)) +
-  labs(x = "Altura (msnm)", y = "Producción anual (kg/arbol)") +
+  labs(x = "Altura (msnm)", y = "Producción anual (kg/árbol)") +
   geom_point(size = 3) +
   theme_bw() + 
   #scale_color_manual(values = c("#5d6d7e", "#979a9a")) +
@@ -238,7 +238,7 @@ Con el objetivo de observar con más detalle se decidió llevar a cabo el mismo 
 
 ```{r fig.align='center', fig.width = 10, fig.height = 5}
 pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum, color = Tratamiento)) +
-  labs(x = "Altura (msnm)", y = "Producción anual (kg/arbol)") +
+  labs(x = "Altura (msnm)", y = "Producción anual (kg/árbol)") +
   geom_point(aes(shape = Tratamiento), size = 3) +
   theme_bw() + 
   scale_color_manual(values = c("#5d6d7e", "#979a9a")) +
