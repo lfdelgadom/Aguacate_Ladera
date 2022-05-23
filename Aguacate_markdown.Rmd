@@ -139,12 +139,15 @@ pn_acum <- data %>% group_by(Temporada, Subparcela, Rep, Tratamiento, Altura) %>
 ```
 
 ```{r fig.align='center', fig.width = 10, fig.height = 6}
+
+Ticks <- c("Con fertirriego", "Sin fertirriego")
 pn_acum %>% dplyr::filter(Temporada == 2021) %>% ggplot(aes(x = Tratamiento, y = Altura)) +
   geom_boxplot(width=0.4, aes(fill= Tratamiento), show.legend = F) +
   scale_fill_manual(values = c("#5d6d7e", "#979a9a")) +
   geom_jitter(width = 0.1, size = 2) +
-  labs(title = "Variación de alturas de los árboles muestreados", y = "Altura (msnm)", x = NULL) +
+  labs(title = "Variación de alturas de los árboles muestreados", y = "Altura (m s. n. m.)", x = NULL) +
   theme_bw()+
+  scale_x_discrete(labels= Ticks) +
   theme(text = element_text(size = 15),
         axis.text.x = element_text(face="bold"))
   
@@ -196,10 +199,10 @@ A continuación se muestra la prueba de medias para las clasificaciones de las a
 ```{r}
 
 # Mean comparisons by Finca
-mean_comparisons_altura <- mod.aguacate %>% 
-  emmeans(pairwise ~ "Altura_category", adjust="tukey") %>% 
-  pluck("emmeans") %>% 
-  cld(details=TRUE, Letters=letters) # add letter display
+  mean_comparisons_altura <- mod.aguacate %>% 
+    emmeans(pairwise ~ "Altura_category", adjust="tukey") %>% 
+    pluck("emmeans") %>% 
+    cld(details=TRUE, Letters=letters) # add letter display
 
 ```
 
@@ -245,12 +248,12 @@ En la siguiente grafica se puede visualizar la tendencia que tuvo la producción
 r_cor <- round(cor(pn_acum_2021$acum, pn_acum_2021$Altura, method = "pearson"),3)
 
 pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum)) +
-  labs(x = "Altura (msnm)", y = "Producción anual (kg/árbol)") +
+  labs(x = "Altura (m s. n. m.)", y = "Producción anual (kg/árbol)") +
   geom_point(size = 3, alpha = 0.6) +
   #scale_color_manual(values = c("#5d6d7e", "#979a9a")) +
   geom_smooth(method = "lm", se = F, color = "black") +
-  geom_text(aes(label = paste("r =",r_cor)),
-            x = 1765, y = 225, size = 5) +
+  annotate("text", x = 1765, y = 225, parse = TRUE, size = 7,
+           label = "'r = 0,634:  '") +
   theme_bw() +
   theme(text = element_text(size = 20),
         axis.text.x = element_text(face="bold"))
@@ -260,9 +263,11 @@ pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum)) +
 Con el objetivo de observar con más detalle se decidió llevar a cabo el mismo diagrama de dispersión, pero diferenciando el tratamiento los árboles que tuvieron fertirriego y los que no tuvieron. En este gráfico se puede concluir que hubo una distribución más amplia de alturas de siembra para los árboles con fertirriego comparado con los árboles que no tenían fertirriego.
 
 ```{r fig.align='center', fig.width = 15, fig.height = 8}
-pn_acum_2021 %>% ggplot(aes(x = Altura, y = acum, color = Tratamiento)) +
-  labs(x = "Altura (msnm)", y = "Producción anual (kg/árbol)") +
-  geom_point(aes(shape = Tratamiento), size = 3, color = "black", alpha = 0.6, show.legend = F) +
+pn_acum_2021 %>% ungroup() %>% mutate(Tratamiento = recode_factor(pn_acum_2021$Tratamiento, `Sin Fertirriego` = "Sin fertirriego",
+        `Con Fertirriego` = "Con fertirriego")) %>% 
+          ggplot(aes(x = Altura, y = acum, color = Tratamiento)) +
+  labs(x = "Altura (m s. n. m.)", y = "Producción anual (kg/árbol)") +
+  geom_point(aes(shape = Tratamiento), size = 4, color = "black", alpha = 0.6, show.legend = F) +
   #scale_color_manual(values = c("#5d6d7e", "#979a9a")) +
   geom_smooth(method = "lm", se = F, color = "black") +
   theme_bw() +
